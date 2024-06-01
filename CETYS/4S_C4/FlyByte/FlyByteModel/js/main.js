@@ -1,170 +1,377 @@
-//Import the THREE.js library
-import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
-// To allow for the camera to move around the scene
-import { OrbitControls } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js";
-// To allow for importing the .gltf file
-import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-//Create a Three.JS Scene
+// Modelo 3D
+let model;
+let loader = new GLTFLoader();
+
+// Renderizar escena 
+const renderer = new THREE.WebGLRenderer({ alpha: true });
+renderer.setClearColor(0xe7f0fd);
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+document.body.appendChild(renderer.domElement);
+
+// Crear donde se pondra la escena 
 const scene = new THREE.Scene();
-//create a new camera with positions and angles
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-//Keep track of the mouse position, so we can make the eye move
-let mouseX = window.innerWidth / 2;
-let mouseY = window.innerHeight / 2;
+// Crear la luz 
+const light = new THREE.DirectionalLight();
+light.intensity = 2;
+light.position.set(2, 5, 10);
+light.castShadow = true;
+scene.add(light);
+scene.add(new THREE.AmbientLight(0xffffff, 0.5));
 
-//Keep the 3D object on a global variable so we can access it later
-let object;
+// Crear la camara 
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(-10, 5, 30);
+camera.layers.enable(1); // Para que solo escoga el objeto que esta de frente 
 
-//OrbitControls allow the camera to move around the scene
-let controls;
+// Controls para poder manipular movimientos de la camara 
+const controls = new OrbitControls(camera, renderer.domElement);
+// Delimitar distancia para que no salga del objeto 
+controls.enableRotate = false;
+controls.enablePan = false;
+controls.enableDamping = true;
+controls.enableZoom = false;
+controls.zoomSpeed = 0.3;
+controls.update();
 
-//Set which object to render
-let objToRender = 'plane';
-
-// Variables Tamaño Canvas
-let widthCanvas = 1000;
-let heighCanvas = 500;
-
-// Variables para sber si se presiono boton y vuelve a presionar, para que se actualice a original 
-var btnAct1 = false;
-var btnAct2 = false;
-
-//Instantiate a loader f  or the .gltf file
-const loader = new GLTFLoader().setPath('../models/plane/');;
-
-//Load the file
-loader.load(
-  `scene.gltf`,
-  function (gltf) {
-    //If the file is loaded, add it to the scene
-    object = gltf.scene;
-    scene.add(object);
-  },
-  function (xhr) {
-    //While it is loading, log the progress
-    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-  },
-  function (error) {
-    //If there is an error, log it
-    console.error(error);
-  }
-);
-
-//Instantiate a new renderer and set its size
-const renderer = new THREE.WebGLRenderer({ alpha: true }); //Alpha: true allows for the transparent background
-
-// Tamaño del Canva donde irá el DOM 
-renderer.setSize(widthCanvas,heighCanvas);
-
-//Add the renderer to the DOM
-document.getElementById("container3D").appendChild(renderer.domElement);
-
-//Set how far the camera will be from the 3D model
-camera.position.z = objToRender === "plane" ? 30 : 25;
-
-//Add lights to the scene, so we can actually see the 3D model
-const topLight = new THREE.DirectionalLight(0xffffff, 1); // (color, intensity)
-topLight.position.set(500, 500, 500) //top-left-ish
-topLight.castShadow = true;
-scene.add(topLight);
-
-const ambientLight = new THREE.AmbientLight(0x333333, objToRender === "plane" ? 1 : 1);
-scene.add(ambientLight);
-
-//This adds controls to the camera, so we can rotate / zoom it with the mouse
-if (objToRender === "plane") {
-  controls = new OrbitControls(camera, renderer.domElement);
-  
-  // Delimitar distancia para que no salga del objeto 
-  controls.minDistance = 5;
-  controls.maxDistance = 30;
-  
-  // Deshabilitar la rotación de la cámara
-  controls.enableRotate = false;
-}
-
-//Render the scene
+// Bucle para animacion 
 function animate() {
   requestAnimationFrame(animate);
   controls.update();
   renderer.render(scene, camera);
 }
 
+// Arreglos y variable para identificaor si fue seleccionado y cuales objetos y id de asientos 
+let INTERSECTED;
+const selectedObjects = new Set();
+const selectedSeats = new Set();
+const maxSelections = 4; // Maximo seleccion de asientos con base al usuario 
+// let maxSelections = parseInt(localStorage.getItem('pasajeros') || '10', 10);
 
 
-// BOTONES CAMBIO DE PERSPECTIVAS
-document.getElementById( "btnAerea" ).onclick = function () {
+// Variables para saber si se presionó el botón y vuelve a presionar, para que se actualice a original 
+let btnAct1 = false;
+let btnAct2 = false;
 
-  // Siempre regresar a default y dependerá si fue seleccionado o no para que entre 
-  camera.position.z = 30;
-  object.position.x = 0; 
-  object.rotation.y = 0; 
-  object.position.z = 0; 
-  object.rotation.x = 0; 
-  object.rotation.y = 0; 
-  object.rotation.z = 0; 
-
-  // Si no lo ha presionado, entonces falso y se cambia perspectiva 
-  if(!btnAct1)
-    {
-      object.rotation.x = Math.PI/2; 
-      object.rotation.y = 0; 
-      object.rotation.z = 0; 
-
-      btnAct2 = false;
-    }
-
-    // Cambia para saber si se presiono o no 
-    btnAct1 = !btnAct1;
-  };
-
-document.getElementById( "btnFrontal" ).onclick = function () {
+// Para simular asientos seleccionados de forma random 
+function getRandomOccupiedSeats(totalSeats, minOccupied, maxOccupied) {
   
-  // Siempre regresar a default y dependerá si fue seleccionado o no para que entre 
-  object.position.x = 0; 
-  object.rotation.y = 0; 
-  object.position.z = 0; 
-  object.rotation.x = 0; 
-  object.rotation.y = 0; 
-  object.rotation.z = 0; 
+  // Arreglo de para asientos ocupados 
+  const occupiedSeats = new Set();
 
-  if(!btnAct2)
-    {
-      object.position.x = 0; 
-      object.rotation.y = 0; 
-      object.position.z = 17.3; 
+  // Random para ver del rango cuantos saldran como ocupados 
+  const numOccupiedSeats = Math.floor(Math.random() * (maxOccupied - minOccupied + 1)) + minOccupied;
 
-      // Delimitar vista usuario se mantenga dentro de obj 
+  // Mientras siga el arreglo de asientos ocupados sea menor a la meta de asientos ocupados
+  while (occupiedSeats.size < numOccupiedSeats) {
 
-      controls.minDistance = 7;
-      controls.maxDistance = 30.3;
+    // Variable random dependiendo el tamano total del avion par que asi haya varios index aleatorios marcados como ocupados 
+    const seatIndex = Math.floor(Math.random() * totalSeats);
 
-
-      // controls.minPolarAngle = 0.5;
-      // controls.maxPolarAngle = 1.5;
-      btnAct1 = false;
-    }
-
-    // Cambia para saber si se presiono o no 
-    btnAct2 = !btnAct2;
-  };
-
-//Add a listener to the window, so we can resize the window and the camera
-window.addEventListener("resize", function () {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
-
-//add mouse position listener, so we can make the eye move
-document.onmousemove = (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
+    // Agrega en el arreglo el index de asientos ocupados 
+    occupiedSeats.add(seatIndex);
+  }
+  // Regresando asi el arreglo de asientos ocupados y sus indices 
+  return occupiedSeats;
 }
 
-//Start the 3D rendering
+// Obtener asientos ocupados aleatoriamente, total, mayor y minimo 
+const totalSeats = 58; 
+const minOccupied = 10;
+const maxOccupied = 30;
+const occupiedSeatIndices = getRandomOccupiedSeats(totalSeats, minOccupied, maxOccupied);
+
+// Dentro de loadModel
+function loadModel(modelPath, onLoadCallback) {
+  // Para que no guarde objetos seleccionados anteriores pero si los nuevos, que son los "mismos" 
+  selectedObjects.clear();
+
+  // Quitar modelo anterior para dar paso al siguiente 
+  if (model) {
+    scene.remove(model);
+  }
+
+  loader.load(modelPath, (gltf) => {
+    model = gltf.scene;
+    
+    // Inicia Contador de ID
+    let row = 'A';
+    let seatNumber = 1;
+    
+    let seatCounter = 0;
+
+    model.traverse((child) => {
+      // Cada objeto que en el modelo tenga "Seat" en su nombre, asi el modelo del avion no se otorge ID, puro asiento \
+      if (child.isMesh && child.name.includes('Seat')) { 
+        child.castShadow = true;
+        child.receiveShadow = true;
+        child.userData = {
+          // Asignar ID A1, A2, B1, B2...
+          id: `${row}${seatNumber++}`,
+
+           // Color original del propio material 
+          originalColor: new THREE.Color(child.material.color.getHex()),
+
+           // Aun no ha sido seleccionado y marca como seleccionable 
+          isSelected: false,
+          isSelectable: true
+        };
+        
+        // Si en otra perspectiva tenia asientos seleccionados y es el mismo que se carga, entonces impelmentar color y agregarlo de nuevo a arreglo
+        if (selectedSeats.has(child.userData.id)) {
+          
+          // Color de seleccionado 
+          child.material.color.set(0x0000ff);
+          
+          // Se deben volver a agregar porque a pesar de ser mismos objetos en cada render difieren, solo como recordatorio que son los mismos 
+          selectedObjects.add(child);
+
+          // Si es igual a arreglo de asientos entonces marcar con que es seleccionado 
+          child.userData.isSelected = true;
+        }
+
+        // Si este asiento está en la lista de ocupados 
+        if (occupiedSeatIndices.has(seatCounter)) {
+          child.material.color.set(0xff0000); // Color rojo para asientos ocupados
+          child.userData.isSelectable = false; // No seleccionable
+        }
+
+        seatCounter++;
+        
+        // Para ir cambiando de ID conforme la cantidad de asientos que hay en el modelo (Fila B solo dos asientos, por eso)
+        if (seatNumber > 4 || (row === 'B' && seatNumber > 2)) {
+          seatNumber = 1;
+          row = String.fromCharCode(row.charCodeAt(0) + 1);
+        }
+
+      // Donde nombre de objeto difiere a Seat, entonces no podra ser seleccionado   
+      } else {
+        child.userData.isSelectable = false;
+      }
+    });
+    // Agregar modelo existente 
+    scene.add(model);
+
+    // Llamar al callback si existe
+    if (onLoadCallback) {
+      onLoadCallback();
+    }
+  }, undefined, (error) => {
+    console.error(error);
+  });
+}
+
+// Modelo Inicial 
+loadModel('../models/flybytein/flybyte.gltf');
+
+// Vista Superior 
+document.getElementById("btnTop").onclick = function () {
+  // Para desactivar el zoom y solo sea dentro del In 
+  controls.enableZoom = false;
+  
+  // Si no lo ha presionado, entonces es falso y se cambia activa
+  if (!btnAct1) {
+    loadModel('../models/flybytetop/flybyte.gltf', () => {
+      // Vista Aerea
+      camera.position.set(0, 37, 0);
+
+      // Delimitar vista usuario se mantenga dentro del obj 
+      controls.minDistance = 0;
+      controls.maxDistance = 37;
+
+      btnAct2 = false;
+    });
+  // Ya fue presionado y vuelve a presionar, regresar a default 
+  } else { 
+    loadModel('../models/flybytein/flybyte.gltf', () => {
+      camera.position.set(-10, 5, 30);
+    });
+  }
+
+  // Cambia para saber si se presionó o no 
+  btnAct1 = !btnAct1;
+};
+
+// Vista Interior 
+document.getElementById("btnIn").onclick = function () {
+  
+  // Para desactivar el zoom y solo sea dentro del In 
+  controls.enableZoom = false;
+
+  // Si es falso entonces se activara
+  if (!btnAct2) {
+    loadModel('../models/flybytein/flybyte.gltf', () => {
+      
+      // Para que pueda hacer zoom y "recorrer" el avion 
+      controls.enableZoom = true;
+      camera.position.set(0, 0, 30);
+
+      model.position.z = 15.6;
+
+      // Delimitar vista usuario se mantenga dentro del obj 
+      controls.minDistance = 5.5;
+      controls.maxDistance = 30;
+
+      btnAct1 = false;
+    });
+  // Ya fue presionado y vuelve a presionar, regresar a default 
+  } else { 
+    loadModel('../models/flybytein/flybyte.gltf', () => {
+      camera.position.set(-10, 5, 30);
+    });
+  }
+
+  // Cambia para saber si se presionó o no 
+  btnAct2 = !btnAct2;
+};
+
+// Botón Reset 
+document.getElementById("btnReset").onclick = function () {
+  console.log('Reset Aplicado');
+
+  // Vaciar el conjunto de objetos seleccionados 
+  selectedObjects.clear();
+  selectedSeats.clear();
+
+  // Reset aplicado Vista Top
+  if(btnAct1){
+    loadModel('../models/flybytetop/flybyte.gltf', () => {
+      camera.position.set(0, 37, 0);
+      // Delimitar vista usuario se mantenga dentro del obj 
+      controls.minDistance = 0;
+      controls.maxDistance = 37;
+
+      btnAct2 = false;
+           
+    });
+  // Reset aplicado Vista In 
+  } else if(btnAct2){
+    loadModel('../models/flybytein/flybyte.gltf', () => {
+      camera.position.set(0, 0, 30);
+      
+      model.position.z = 15.6;
+
+      // Delimitar vista usuario se mantenga dentro del obj 
+      controls.minDistance = 5.5;
+      controls.maxDistance = 30;
+
+      btnAct1 = false;
+    });
+  }
+}
+
+// RAYCASTER 
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+// Evento cuando se mueve el mouse o cuando se hace click 
+document.addEventListener('mousemove', onMouseMove);
+document.addEventListener('mousedown', onMouseDown);
+
+function onMouseMove(event) {
+  event.preventDefault();
+
+  // Leer posicion del mouse 
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+
+  // Variable de los objetos interactuados 
+  const intersects = raycaster.intersectObjects(scene.children, true).filter(intersect => intersect.object.userData.isSelectable);
+
+  if (intersects.length > 0) {
+    const intersectedObject = intersects[0].object;
+
+    if (INTERSECTED !== intersectedObject) {
+      if (INTERSECTED) {
+         // Hover seleccion color
+        if (selectedObjects.has(INTERSECTED)) {
+          INTERSECTED.material.color.set(0x3b87ef);
+        } else {
+          // Sino no hover color
+          INTERSECTED.material.color.copy(INTERSECTED.userData.originalColor);
+        }
+      }
+      INTERSECTED = intersectedObject;
+
+      if (!selectedObjects.has(INTERSECTED)) {
+        // Hover color
+        INTERSECTED.material.color.set(0x3b87ef); 
+      } else {
+        // Seleccionado hover color
+        INTERSECTED.material.color.set(0xFFD740); 
+      }
+    }
+    // Mostrar el ID del asiento en el div
+    document.getElementById('seatInfo').innerHTML = `Asiento: ${intersectedObject.userData.id}`;
+    // console.log(`Asiento: ${intersectedObject.userData.id}`);
+  } else {
+    if (INTERSECTED) {
+      if (selectedObjects.has(INTERSECTED)) {
+        // Selección color
+        INTERSECTED.material.color.set(0x3b87ef); 
+      } else {
+        INTERSECTED.material.color.copy(INTERSECTED.userData.originalColor);
+      }
+    }
+    INTERSECTED = null;
+
+    // Ocultar el ID del asiento cuando no hay hover
+    document.getElementById('seatInfo').innerHTML = 'Asiento: ID';
+  }
+}
+// Cuando hace click 
+function onMouseDown(event) {
+  
+  // Posiciona mouse en pantalla 
+  event.preventDefault();
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+
+  const intersects = raycaster.intersectObjects(scene.children, true).filter(intersect => intersect.object.userData.isSelectable);
+  
+  if (intersects.length > 0) {
+    const clickedObject = intersects[0].object;
+    if (selectedObjects.has(clickedObject)) {
+
+      // Si quita seleccion de un objeto 
+      clickedObject.material.color.copy(clickedObject.userData.originalColor);
+      selectedObjects.delete(clickedObject);
+      selectedSeats.delete(clickedObject.userData.id);
+    } else {
+      if (selectedObjects.size >= maxSelections) {
+        // Si se pasa de la cantidad de seleccion de asientos \
+        alert(`Solo puedes seleccionar ${maxSelections} asientos.`);
+        return;
+      }
+      // Seleccionar objetos y agregarlo a los arreglos 
+      clickedObject.material.color.set(0x3b87ef); // Click color
+      selectedObjects.add(clickedObject);
+      selectedSeats.add(clickedObject.userData.id);
+    }
+    // Cambiar de posicion e imprimir en consola cuantos asientos lleva y cual fue seleccionado 
+    clickedObject.userData.isSelected = !clickedObject.userData.isSelected;
+    console.log(`Object ID ${clickedObject.userData.id} seleccionado`);
+    console.log('Asientos seleccionados:', Array.from(selectedSeats));
+  }
+}
+
+
 animate();
 
-// RAYCASTER
+// Mostrar los asientos seleccionados en la consola cada 5 segundos, para verificar 
+// setInterval(() => {
+//   console.log('---');
+//   console.log('selectedSeats:', Array.from(selectedSeats));
+//   console.log('selectedObjects:', Array.from(selectedObjects));
+//   console.log('maxSelections:', maxSelections);
+//   console.log(Math.floor(Math.random() * (58 - 1) + 1));
+// }, 3000);
