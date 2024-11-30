@@ -1,0 +1,289 @@
+
+body
+{
+	background: url(images/fondoTodo.jpg) no-repeat fixed center #000;
+	background-size: cover; 
+	background-position: top center;
+	margin: 10px;
+}
+
+/* Para el home  */
+H1
+{
+	font-family: Montserrat, sans-serif;
+    color: #036666; 
+    font-size: 35px;
+	margin: 0px 0px 0px 0px;
+}
+
+/* Titulos de formularios */
+H3
+{
+	font-family:  Montserrat, sans-serif;
+    color:#F0EBD8; 
+    font-size: 35px;
+	margin: 0px 10px;
+	padding-top: 15px;
+}
+
+H4 /*footer */
+{
+	font-family:  Montserrat, sans-serif;
+    color:#F0EBD8; 
+    font-size: 18px;
+	margin: 7px;
+	float:left;
+}
+
+H5 /*graficos */
+{
+	font-family:  Montserrat, sans-serif;
+    color:#660011; 
+    font-size: 40px;
+	margin: 7px;
+}
+
+/* la separacion del home */
+#home
+{
+	background-color:#E0EAFC; 
+	margin-top: 30px; 
+	width: 100%; 
+	height:auto;
+}
+
+#home{
+     width:100%;
+     text-align:center;
+     color: black;
+}
+
+/* informacion del home */
+#infoHome, #infoListAlumnos, #infoListVacunados
+{
+	font-family:  Montserrat, sans-serif;
+    color: #036666; 
+    font-size: 25px;
+	margin: 5px 20px 0px 20px;
+	padding: 10px;
+}
+
+.imgHome
+{
+	width: 10%; 
+	height: auto;
+	margin: 0px 10px 13px 10px;
+}
+
+/* Para la agrupación en la lista de los alumnos, perdón si son muchos id, quedará bello de verdad */
+#btnAgrupar ,#agrpGrupos, #agrpEspecialidad, #agrpGenero,#agrpMarca, #titulosAgrp
+{
+	float: left;
+	margin: 0px 10px 0px 10px;
+	width:5%;
+	padding: 5PX;
+}
+
+#agrpEspecialidad, #agrpGenero
+{
+	width:14%;
+}
+
+#agrpMarca
+{
+	width:6.5%;
+}
+
+#titulosAgrp
+{
+	width:14%;
+	float:left;
+}
+
+#btnAgrupar
+{
+	width:14%;
+	float:left;
+}
+
+FORM
+{
+    margin: 30px 0px 30px 0px;
+	border-radius: 10px;
+    background-color:#660011;
+    width:45%;
+    height:auto;
+	text-align: center;
+}
+
+/* Para el formulario de los gráficos y que se vea bien */
+#formGraficos
+{
+	width:71.5%;
+	background-color: white;
+}
+
+select
+{
+    height: auto;
+	width: 90%;
+	padding: 12px 20px;
+	margin: 8px 0;
+	font-family: Courier New, monospace;
+	box-sizing: border-box;
+	background-color: white;
+}
+
+select:hover
+{
+	background-color:#FFD6DC;
+}
+
+LABEL
+{
+	width: 85%;
+	margin: 8px 0;
+	font-family: Georgia, serif;
+	color: #F9F7F0;
+}
+
+/* Para los labels del form graficos */
+.labelGrande
+{
+	font-size: 18px;
+	font-family: Georgia, serif;
+}
+
+#labelgrafico
+{
+	color: #660011; 
+}
+
+.linkFormGrafico
+{
+	margin: 8px 0;
+	font-family: Georgia, serif;
+	color: #660011;
+	display: inline;
+	font-size: 18px;
+}
+
+IMG
+{
+	margin-top: 8px;
+	width: 150px; 
+	height:150px;
+}
+
+/* Para el footer */
+#footer
+{
+	background-color:#003049; 
+	margin-top: 30px; 
+	width: auto; 
+	height:40px;
+}
+
+/* Para que pasar al cursor por encima de "Mi espacio" y la fecha, no lo quiera seleccionar */
+#fechaActual
+{
+	font-family: Apple Chancery, cursive;
+    color:#F0EBD8; 
+    font-size: 18px;
+	margin: 7px;
+	float: right;
+}
+
+/* las imagenes de autores */
+.imageAutor
+{
+	margin: 7px;
+	width: auto; 
+	height:28px;
+	border-radius: 30px 30px 30px 30px;
+	float:left;
+}
+
+input[type=text],input[type=password], INPUT[type=date],  INPUT[type=email]
+
+{
+	background-color: white;
+	height: auto;
+	width: 90%;
+	padding: 12px 20px;
+	margin: 8px 0;
+	font-family: Courier New, monospace;
+	box-sizing: border-box;
+}
+
+INPUT[type=text]:focus
+{
+	/* Color de caja de texto */
+	background-color: white;
+}
+
+INPUT[type=text]:hover
+{ 	
+	/*cursor pasa por encima*/
+	background-color: #FFD6DC;
+}
+
+INPUT[type=date]:hover
+{
+	background-color: #FFD6DC;
+}
+
+/* Formulario de agregar un alumno de el nombre pero más acomodado */
+#txtAPaternoChico, #txtAMaternoChico, #txtNombreChico, #txtSNombreChico
+{
+	width: 45%;
+}
+
+/* Los ID del subir imagen del certificado, maybe quedan bien */
+#IDVacunadoChico, #IDAlumnoChico, #IDVacunaChico
+{
+	width: 28%;
+}	
+
+/* Para las cajas de texto en el formulario de responder la duda */
+#txtIDDudaChico, #txtIDAlumnoChico
+{
+	width: 42.2%;
+}
+
+/* Porque los botones de las acciones son más chicos, no pude poner clase porque lo agarraba después del codigo de abajo, asi sera mas id pero se vera bonito */
+#btnDeleteUsuarioSi, #btnDeleteUsuarioNo, #btnDeleteClienteNo, #btnDeleteClienteSi
+{
+	width:44.5%;
+}
+
+input[type=submit], INPUT[type=button]
+{
+	background-color: #CC0022;
+	font-family: Copperplate, Arial black;
+	font-size: 15px;
+	width:90%;
+	color: #F0EBD8; 
+	border: none;
+	padding: 10px;
+	margin-top: 8px;
+	margin-bottom: 20px;
+	cursor: pointer;
+}
+
+INPUT[type=file]
+{
+	color: #545454; 
+	height: auto;
+	width: 90%;
+	padding: 12px 20px;
+	margin: 8px 0;
+	font-family: Courier New, monospace;
+	box-sizing: border-box;
+	background-color: white;
+}
+
+INPUT[type=file]:hover
+{
+	background-color: #FFD6DC; 
+}
