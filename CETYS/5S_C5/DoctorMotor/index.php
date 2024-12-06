@@ -147,8 +147,8 @@
 			case "reporte30":
 				include_once("reporte/reporte30.php");
 			break;
-
 			//FIN ACCIONES REPORTE 
+
             // INICIO ACCIONES CLIENTE 
 			case"listCliente":
 				include_once("cliente/listCliente.php");
@@ -167,8 +167,194 @@
             break;
 
 			// FIN ACCIONES CLIENTE 
-            // INICIO ACCIONES  
-            // FIN ACCIONES 
+
+            // INICIO ACCIONES VEHICULO 
+			case"listVehiculo":
+				include_once("vehiculo/listVehiculo.php");
+			break;
+			
+			case "addVehiculo":
+				// Verificar si existe el parámetro id_cliente en la URL
+				$id_cliente = isset($_GET['id_cliente']) ? intval($_GET['id_cliente']) : 0;
+			
+				// Incluye el archivo del formulario
+				include_once("vehiculo/formAddVehiculo.php");
+			break;
+			
+			case"filterAddVehiculo":
+                include_once("vehiculo/formFilterAddVehiculo.php");
+            break;
+		
+			case"editVehiculo":
+                include_once("vehiculo/formEditVehiculo.php");
+            break;
+
+            case"deleteVehiculo":
+                include_once("vehiculo/deleteVehiculo.php");
+            break;
+            // FIN ACCIONES VEHICULO 
+			
+			// INICIO ACCIONES DEPARTAMENTO
+			case "listDepartamento":
+				include_once("departamento/listDepartamento.php");
+				break;
+
+			case "addDepartamento":
+				include_once("departamento/formAddDepartamento.php");
+				break;
+
+			case "editDepartamento":
+				include_once("departamento/formEditDepartamento.php");
+				break;
+
+			case "deleteDepartamento":
+				include_once("departamento/deleteDepartamento.php");
+				break;
+			// FIN ACCIONES DEPARTAMENTO
+			
+			// INICIO ACCIONES EMPLEADO 
+			case "listEmpleado":
+				include_once("empleado/listEmpleado.php");
+				break;
+
+			case "addEmpleado":
+				include_once("empleado/formAddEmpleado.php");
+				break;
+
+			case "editEmpleado":
+				include_once("empleado/formEditEmpleado.php");
+				break;
+
+			case "deleteEmpleado":
+				include_once("empleado/deleteEmpleado.php");
+				break;
+            // FIN ACCIONES EMPLEADO 
+			
+			// INICIO ACCIONES CATALOGO
+			case "listCatalogo":
+				include_once("catalogo/listCatalogo.php");
+				break;
+
+			case "addCatalogo":
+				include_once("catalogo/formAddCatalogo.php");
+				break;
+
+			case "editCatalogo":
+				include_once("catalogo/formEditCatalogo.php");
+				break;
+
+			case "deleteCatalogo":
+				include_once("catalogo/deleteCatalogo.php");
+				break;
+            // FIN ACCIONES CATALOGO
+			
+			// INICIO ACCIONES DETALLE GARANTIA 
+			case "listDetalleGarantia":
+				include_once("detalle_garantia/listDetalleGarantia.php");
+				break;
+
+			case "addDetalleGarantia":
+				include_once("detalle_garantia/formAddDetalleGarantia.php");
+				break;
+
+			case "editDetalleGarantia":
+				include_once("detalle_garantia/formEditDetalleGarantia.php");
+				break;
+
+			case "deleteDetalleGarantia":
+				include_once("detalle_garantia/deleteDetalleGarantia.php");
+				break;
+            // FIN ACCIONES  DETALLE GARANTIA 
+
+			// INICIO ACCIONES DETALLE INVENTARIO
+			case "listDetalleInventario":
+				include_once("detalle_inventario/listDetalleInventario.php");
+				break;
+
+			case "addDetalleInventario":
+				include_once("detalle_inventario/formAddDetalleInventario.php");
+				break;
+
+			case "editDetalleInventario":
+				include_once("detalle_inventario/formEditDetalleInventario.php");
+				break;
+
+			case "deleteDetalleInventario":
+				include_once("detalle_inventario/deleteDetalleInventario.php");
+				break;
+            // FIN ACCIONES  DETALLE INVENTARIO 
+			
+			// INICIO ACCIONES  
+				case "listDetallesManoObra":
+					include_once("detalles_mano_obra/listDetallesManoObra.php");
+					break;
+
+				case "addDetallesManoObra":
+					include_once("detalles_mano_obra/formAddDetallesManoObra.php");
+					break;
+
+				case "editDetallesManoObra":
+					include_once("detalles_mano_obra/formEditDetallesManoObra.php");
+					break;
+
+				case "deleteDetallesManoObra":
+					include_once("detalles_mano_obra/deleteDetallesManoObra.php");
+					break;
+				// FIN ACCIONES  
+
+				// INICIO ACCIONES  
+				case "listFactura":
+					include_once("factura/listFactura.php");
+					break;
+
+				case "addFactura":
+					include_once("factura/formAddFactura.php");
+					break;
+
+				case "editFactura":
+					include_once("factura/formEditFactura.php");
+					break;
+
+				case "deleteFactura":
+					include_once("factura/deleteFactura.php");
+					break;
+				// FIN ACCIONES  
+				
+				// INICIO ACCIONES  
+				case "listInventario":
+					include_once("inventario/listInventario.php");
+					break;
+
+				case "listManoObra":
+					include_once("mano_obra/listManoObra.php");
+					break;
+
+				case "listPromocion":
+					include_once("promocion/listPromocion.php");
+						break;
+
+				case "listServicio":
+					include_once("servicio/listServicio.php");
+					break;
+
+				case "listVenta":
+					include_once("venta/listVenta.php");
+					break;
+
+					
+				// case "list":
+				// 	include_once("/list.php");
+				// 	break;
+
+				// case "edit":
+				// 	include_once("/formEdit.php");
+				// 	break;
+
+				// case "delete":
+				// 	include_once("/delete.php");
+				// 	break;
+				// FIN ACCIONES  
+				
 
 			default:
 				// Este es el archivo de inicio de mi aplicación web

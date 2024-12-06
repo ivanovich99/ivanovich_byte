@@ -5,7 +5,7 @@
 		define('MICONSTANTEGLOBAL',' Hola');
 		
 		define ('ROOTURL', 'http://localhost/doctorMotor/');
-		define ('AUTOR','Avila Chiu Oscar Ivanovich');
+		define ('AUTOR','Avila Chiu Oscar Ivanovich - García Morales David Alexandro');
 		define ('DOCROOT', $_SERVER['DOCUMENT_ROOT'].'/doctorMotor/');
 		define ('SITENAME','Doctor Motor');
 
@@ -14,8 +14,19 @@
 		define ('JS', ROOTURL.'js/');
 		
 		define ('DBHOST', 'localhost');//nombre de nuestro servidor, administrador de bases de datos
-		define ('DBUSER', 'root');//nombre de usuario para accesar
-		define ('DBPASSWD', '#Basesdedatos9');//es la contraseña para accesar a la base de datos
+		
+		//nombre de usuario para accesar
+		// define ('DBUSER', 'administrador_doctor_motor'); 
+		define ('DBUSER', 'analista_de_datos_doctor_motor'); 
+		// define ('DBUSER', 'analista_doctor_motor'); 
+		// define ('DBUSER', 'root');
+
+		//es la contraseña para accesar a la base de datos
+		// define ('DBPASSWD', 'AdminD0cM0t0r'); 
+		define ('DBPASSWD', 'An4list4D4t05D0cM0t0r'); 
+		// define ('DBPASSWD', 'An4list4D0cM0t0r');
+		// define ('DBPASSWD', '#Basesdedatos9');
+
 		define ('DBNAME', 'taller_mecanico'); // Nombre base de datos 
 		define ('DBPORT', '3306'); // Nombre base de datos 
 
